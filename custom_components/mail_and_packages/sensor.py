@@ -880,14 +880,39 @@ def get_mails(account, image_output_path):
 
 
 def resize_images(images):
+    first_pass_images = []
     sized_images = []
     for image in images:
-        if image.shape[1] < 700:
+        #0 check height of all images
+        if image.shape[0] > 315:
+            shape = "w:" + str(image.shape[1]) + "h:" + str(image.shape[0])
+            wpercent = 315/image.shape[0]
+            width = int(float(image.shape[1])*float(wpercent))
+            size = "w:" + str(width) + "h:315"
+            first_pass_images.append(img_as_ubyte(resize(image, (315, width))))
+            _LOGGER.debug("Image size: %s", str(shape))
+            _LOGGER.debug("Image too tall, new width: %s", str(width))
+            _LOGGER.debug("resize percent: %s", str(wpercent))
+            _LOGGER.debug("new size: %s", str(size))
+        else:
+            first_pass_images.append(image)
+            _LOGGER.debug("Image fine")
+            
+    for image in first_pass_images:
+        #1 check width of image that passed the width test and the resized width test images
+        if image.shape[1] > 700:
+            shape = "w:" + str(image.shape[1]) + "h:" + str(image.shape[0])
             wpercent = 700/image.shape[1]
             height = int(float(image.shape[0])*float(wpercent))
-            sized_images.append(img_as_ubyte(resize(image, (height, 700))))
+            size = "w:700" + "h:" + str(height)
+            sized_images.append(img_as_ubyte(resize(image, (height, 300))))
+            _LOGGER.debug("Image size: %s", str(shape))
+            _LOGGER.debug("Image too wide, new height: %s", str(height))
+            _LOGGER.debug("resize percent: %s", str(wpercent))
+            _LOGGER.debug("new size: %s", str(size))
         else:
-            sized_images.append(img_as_ubyte(resize(image, (317, 700))))
+            sized_images.append(image)
+            _LOGGER.debug("Image fine")
 
     return sized_images
 
