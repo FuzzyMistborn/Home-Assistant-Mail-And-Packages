@@ -905,7 +905,7 @@ def resize_images(images):
             wpercent = 700/image.shape[1]
             height = int(float(image.shape[0])*float(wpercent))
             size = "w:700" + "h:" + str(height)
-            sized_images.append(img_as_ubyte(resize(image, (height, 300))))
+            sized_images.append(img_as_ubyte(resize(image, (height, 700))))
             _LOGGER.debug("Image size: %s", str(shape))
             _LOGGER.debug("Image too wide, new height: %s", str(height))
             _LOGGER.debug("resize percent: %s", str(wpercent))
